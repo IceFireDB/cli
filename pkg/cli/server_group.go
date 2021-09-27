@@ -14,7 +14,7 @@ import (
 
 	"github.com/IceFireDB/kit/pkg/models"
 
-	log "github.com/ngaut/logging"
+	log "github.com/IceFireDB/kit/pkg/logger"
 )
 
 // codis redis instance manage tool
@@ -94,7 +94,7 @@ func runAddServerToGroup(context *cli.Context) error {
 func runListServerGroup(context *cli.Context) error {
 	groups, err := store.ListGroup()
 	if err != nil {
-		log.Warning(err)
+		log.Warn(err)
 		return err
 	}
 	b, _ := json.MarshalIndent(groups, " ", "  ")
@@ -138,7 +138,7 @@ func runRemoveServerFromGroup(context *cli.Context) error {
 	addr := context.Args().Get(1)
 	serverGroup, err := store.LoadGroup(groupId, true)
 	if err != nil {
-		log.Warning(err)
+		log.Warn(err)
 		return err
 	}
 	if len(serverGroup.Servers) == 0 {

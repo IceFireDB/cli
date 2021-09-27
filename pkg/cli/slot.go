@@ -14,7 +14,7 @@ import (
 	"github.com/IceFireDB/kit/pkg/models"
 	"github.com/juju/errors"
 
-	log "github.com/ngaut/logging"
+	log "github.com/IceFireDB/kit/pkg/logger"
 	uuid "github.com/nu7hatch/gouuid"
 )
 
@@ -171,7 +171,7 @@ func runSlotMigrate(context *cli.Context) error {
 	t.CreateAt = strconv.FormatInt(time.Now().Unix(), 10)
 	u, err := uuid.NewV4()
 	if err != nil {
-		log.Warning(err)
+		log.Warn(err)
 		return errors.Trace(err)
 	}
 	t.Id = u.String()
@@ -181,11 +181,11 @@ func runSlotMigrate(context *cli.Context) error {
 	if ok, err := preMigrateCheck(t); ok {
 		err = RunMigrateTask(t)
 		if err != nil {
-			log.Warning(err)
+			log.Warn(err)
 			return errors.Trace(err)
 		}
 	} else {
-		log.Warning(err)
+		log.Warn(err)
 		return errors.Trace(err)
 	}
 	return nil

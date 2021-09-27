@@ -19,9 +19,9 @@ import (
 	"github.com/ledisdb/xcodis/utils"
 	_ "net/http/pprof"
 
+	log "github.com/IceFireDB/kit/pkg/logger"
 	"github.com/c4pt0r/cfg"
 	"github.com/juju/errors"
-	log "github.com/ngaut/logging"
 )
 
 // build info
@@ -100,19 +100,18 @@ func main() {
 	}
 	app.Commands = []*cli.Command{pkgcli.NewSlotCmd(), pkgcli.NewGroupCmd()}
 	app.Before = func(ctx *cli.Context) (err error) {
-		log.SetLevelByString("info")
 
 		configFile := ctx.String("config")
 		config, err = utils.InitConfigFromFile(configFile)
 		if err != nil {
 			panic(err)
 		}
-		if logfile := ctx.String("log-file"); logfile != "" {
-			log.SetOutputByName(ctx.String("log-file"))
-		}
-		if logLevel := ctx.String("log-file"); logLevel != "" {
-			log.SetLevelByString(logLevel)
-		}
+		//if logfile := ctx.String("log-file"); logfile != "" {
+		//	log.SetOutputByName(ctx.String("log-file"))
+		//}
+		//if logLevel := ctx.String("log-file"); logLevel != "" {
+		//	log.SetLevelByString(logLevel)
+		//}
 
 		coordinatorType, _ := config.ReadString("coordinator_type", "etcd")
 		coordinatorAddr, _ := config.ReadString("coordinator_addr", "localhost:2379")
@@ -142,6 +141,7 @@ func main() {
 		return nil
 	}
 
+	log.Init("cli", log.WithOutputLevelString("info"))
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
 	signal.Notify(c, syscall.SIGTERM)

@@ -10,7 +10,7 @@ import (
 	"github.com/IceFireDB/kit/pkg/models"
 	"github.com/juju/errors"
 
-	log "github.com/ngaut/logging"
+	log "github.com/IceFireDB/kit/pkg/logger"
 )
 
 var (
@@ -88,7 +88,7 @@ func RunMigrateTask(task *MigrateTask) error {
 				return err
 			}
 			if s.State.Status != models.SLOT_STATUS_ONLINE && s.State.Status != models.SLOT_STATUS_MIGRATE {
-				log.Warning("status is not online && migrate", s)
+				log.Warn("status is not online && migrate", s)
 				return nil
 			}
 
@@ -116,7 +116,7 @@ func RunMigrateTask(task *MigrateTask) error {
 
 			// cannot migrate to itself
 			if from == to {
-				log.Warning("from == to, ignore", s)
+				log.Warn("from == to, ignore", s)
 				return nil
 			}
 
@@ -201,7 +201,7 @@ func preMigrateCheck(t *MigrateTask) (bool, error) {
 						if ok, err := preMigrateCheck(curMigrateTask); ok {
 							RunMigrateTask(curMigrateTask)
 						} else {
-							log.Warning(err)
+							log.Warn(err)
 						}
 
 						lck.Lock()

@@ -12,7 +12,7 @@ import (
 	"github.com/IceFireDB/kit/pkg/models"
 	"golang.org/x/net/context"
 
-	log "github.com/ngaut/logging"
+	log "github.com/IceFireDB/kit/pkg/logger"
 
 	"github.com/garyburd/redigo/redis"
 	_ "github.com/juju/errors"
@@ -82,7 +82,7 @@ func (m *migrater) sendLedisMigrateCmd(c redis.Conn, slotId int, toAddr string) 
 	}
 
 	count := 10
-	num, err := redis.Int(c.Do("xmigratedb", addrParts[0], addrParts[1], m.group, count, slotId, MIGRATE_TIMEOUT))
+	num, err := redis.Int(c.Do("migratedb", addrParts[0], addrParts[1], m.group, count, slotId, MIGRATE_TIMEOUT))
 	if err != nil {
 		return false, err
 	} else if num < count {
@@ -97,15 +97,14 @@ func (m *migrater) sendMigrateCmd(c redis.Conn, slotId int, toAddr string) (bool
 	//if broker == LedisBroker {
 	//	return m.sendLedisMigrateCmd(c, slotId, toAddr)
 	//} else {
-	return m.sendRedisMigrateCmd(c, slotId, toAddr)
+	//return m.sendRedisMigrateCmd(c, slotId, toAddr)
 	//}
+	return m.sendLedisMigrateCmd(c, slotId, toAddr)
 }
 
 var ErrStopMigrateByUser = errors.New("migration stop by user")
 
 func MigrateSingleSlot(slotId, fromGroup, toGroup int, delay int, stopChan <-chan struct{}) error {
-	// todo finish the real migrate operation
-	return nil
 	groupFrom, err := store.LoadGroup(fromGroup, true)
 	if err != nil {
 		return fmt.Errorf("load from group err %w", err)
@@ -117,7 +116,7 @@ func MigrateSingleSlot(slotId, fromGroup, toGroup int, delay int, stopChan <-cha
 
 	var fromMaster, toMaster *models.Server
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Second)
 	defer cancel()
 	for fromMaster == nil || toMaster == nil {
 		if ctx.Err() != nil {
@@ -130,7 +129,7 @@ func MigrateSingleSlot(slotId, fromGroup, toGroup int, delay int, stopChan <-cha
 			toMaster, err = store.Master(groupTo)
 		}
 
-		toMaster, err = store.Master(groupTo)
+		//toMaster, err = store.Master(groupTo)
 	}
 	if err != nil {
 		return err

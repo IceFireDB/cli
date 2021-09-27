@@ -1,6 +1,6 @@
 #!/bin/sh
 echo "slots initializing..."
-../bin/cli -c config.ini -f true slot init
+../bin/cli -c config.ini slot init -f true
 echo "done"
 
 echo "set slot ranges to server groups..."

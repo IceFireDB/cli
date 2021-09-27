@@ -10,7 +10,7 @@ import (
 	"github.com/juju/errors"
 
 	docopt "github.com/docopt/docopt-go"
-	log "github.com/ngaut/logging"
+	log "github.com/IceFireDB/kit/pkg/logger"
 )
 
 func cmdAction(argv []string) (err error) {
@@ -45,14 +45,14 @@ options:
 		if args["-n"].(bool) {
 			n, err := strconv.Atoi(args["<num>"].(string))
 			if err != nil {
-				log.Warning(err)
+				log.Warn(err)
 				return err
 			}
 			return runGCKeepN(n)
 		} else if args["-s"].(bool) {
 			sec, err := strconv.Atoi(args["<seconds>"].(string))
 			if err != nil {
-				log.Warning(err)
+				log.Warn(err)
 				return errors.Trace(err)
 			}
 			return runGCKeepNSec(sec)
