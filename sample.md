@@ -14,10 +14,13 @@ make
 
 
 ### start slot manege
+> Follow the steps in samples. 
 ```shell
-
+make
+cd samples
+./add_group.sh
+./initslot.sh
 ```
-
 
 ### start proxy
 ```shell
